@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\PayrollCalculator.Engines\PayrollCalculator.Engines.csproj" />
+    <ProjectReference Include="..\PayrollCalculator.Accessors\PayrollCalculator.Accessors.csproj" />
+    <ProjectReference Include="..\PayrollCalculator.Utilities\PayrollCalculator.Utilities.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

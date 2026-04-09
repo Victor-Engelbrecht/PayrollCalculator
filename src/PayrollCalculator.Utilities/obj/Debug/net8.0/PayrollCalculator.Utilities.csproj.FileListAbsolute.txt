@@ -1,0 +1,11 @@
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Utilities\bin\Debug\net8.0\PayrollCalculator.Utilities.deps.json
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Utilities\bin\Debug\net8.0\PayrollCalculator.Utilities.dll
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Utilities\bin\Debug\net8.0\PayrollCalculator.Utilities.pdb
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Utilities\obj\Debug\net8.0\PayrollCalculator.Utilities.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Utilities\obj\Debug\net8.0\PayrollCalculator.Utilities.AssemblyInfoInputs.cache
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Utilities\obj\Debug\net8.0\PayrollCalculator.Utilities.AssemblyInfo.cs
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Utilities\obj\Debug\net8.0\PayrollCalculator.Utilities.csproj.CoreCompileInputs.cache
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Utilities\obj\Debug\net8.0\PayrollCalculator.Utilities.dll
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Utilities\obj\Debug\net8.0\refint\PayrollCalculator.Utilities.dll
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Utilities\obj\Debug\net8.0\PayrollCalculator.Utilities.pdb
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Utilities\obj\Debug\net8.0\ref\PayrollCalculator.Utilities.dll

@@ -1,0 +1,15 @@
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\bin\Debug\net8.0\PayrollCalculator.Engines.deps.json
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\bin\Debug\net8.0\PayrollCalculator.Engines.dll
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\bin\Debug\net8.0\PayrollCalculator.Engines.pdb
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\bin\Debug\net8.0\PayrollCalculator.Utilities.dll
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\bin\Debug\net8.0\PayrollCalculator.Utilities.pdb
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\obj\Debug\net8.0\PayrollCalculator.Engines.csproj.AssemblyReference.cache
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\obj\Debug\net8.0\PayrollCalculator.Engines.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\obj\Debug\net8.0\PayrollCalculator.Engines.AssemblyInfoInputs.cache
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\obj\Debug\net8.0\PayrollCalculator.Engines.AssemblyInfo.cs
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\obj\Debug\net8.0\PayrollCalculator.Engines.csproj.CoreCompileInputs.cache
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\obj\Debug\net8.0\PayrollC.12F5989F.Up2Date
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\obj\Debug\net8.0\PayrollCalculator.Engines.dll
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\obj\Debug\net8.0\refint\PayrollCalculator.Engines.dll
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\obj\Debug\net8.0\PayrollCalculator.Engines.pdb
+C:\Dev\PayrollCalculator\src\PayrollCalculator.Engines\obj\Debug\net8.0\ref\PayrollCalculator.Engines.dll

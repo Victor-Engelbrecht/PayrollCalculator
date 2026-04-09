@@ -1,0 +1,6 @@
+@PayrollCalculator.Client_HostAddress = http://localhost:5102
+
+GET {{PayrollCalculator.Client_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

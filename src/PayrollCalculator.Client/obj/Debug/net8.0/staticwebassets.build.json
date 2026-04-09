@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "GXDh1BRy4AzhoY88NKmDhWW2u5ylrmdHBOYcNg4dFcE=",
+  "Source": "PayrollCalculator.Client",
+  "BasePath": "_content/PayrollCalculator.Client",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
