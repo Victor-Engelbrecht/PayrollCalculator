@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\PayrollCalculator.Client.props" />
-</Project>
