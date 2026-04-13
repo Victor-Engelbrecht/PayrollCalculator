@@ -2,8 +2,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PayrollCalculator.Engines\PayrollCalculator.Engines.csproj" />
-    <ProjectReference Include="..\PayrollCalculator.Accessors\PayrollCalculator.Accessors.csproj" />
+    <ProjectReference Include="..\PayrollCalculator.Repositories\PayrollCalculator.Repositories.csproj" />
     <ProjectReference Include="..\PayrollCalculator.Utilities\PayrollCalculator.Utilities.csproj" />
+    <ProjectReference Include="..\PayrollCalculator.Domain\PayrollCalculator.Domain.csproj" />
+    <ProjectReference Include="..\PayrollCalculator.Adapters\PayrollCalculator.Adapters.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

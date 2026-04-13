@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\PayrollCalculator.Accessors\PayrollCalculator.Accessors.csproj" />
+    <ProjectReference Include="..\..\..\src\PayrollCalculator.Repositories\PayrollCalculator.Repositories.csproj" />
     <ProjectReference Include="..\..\..\src\PayrollCalculator.Utilities\PayrollCalculator.Utilities.csproj" />
   </ItemGroup>
 

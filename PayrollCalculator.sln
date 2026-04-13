@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollCalculator.Utilities
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollCalculator.Engines", "src\PayrollCalculator.Engines\PayrollCalculator.Engines.csproj", "{9E4CBA87-1261-4D95-BCFA-42AF996B9EEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollCalculator.Accessors", "src\PayrollCalculator.Accessors\PayrollCalculator.Accessors.csproj", "{6B02A731-289C-4321-AB6C-6264202D6C83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollCalculator.Repositories", "src\PayrollCalculator.Repositories\PayrollCalculator.Repositories.csproj", "{6B02A731-289C-4321-AB6C-6264202D6C83}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollCalculator.Managers", "src\PayrollCalculator.Managers\PayrollCalculator.Managers.csproj", "{757237B4-3C98-41A1-9B13-F062048D3974}"
 EndProject
@@ -24,6 +24,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "integration", "integration", "{B77F5DB8-8774-4A73-AAC9-BEA955CA20EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollCalculator.IntegrationTests", "tests\integration\PayrollCalculator.IntegrationTests\PayrollCalculator.IntegrationTests.csproj", "{9C727259-72A3-4DEC-A1D1-C254A97C41CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollCalculator.Domain", "src\PayrollCalculator.Domain\PayrollCalculator.Domain.csproj", "{D07CD06E-6062-4037-9D54-E9225542E09E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollCalculator.Adapters", "src\PayrollCalculator.Adapters\PayrollCalculator.Adapters.csproj", "{49CC25E4-42C7-40A6-8E5A-91E7F7AE0312}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +66,14 @@ Global
 		{9C727259-72A3-4DEC-A1D1-C254A97C41CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C727259-72A3-4DEC-A1D1-C254A97C41CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C727259-72A3-4DEC-A1D1-C254A97C41CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D07CD06E-6062-4037-9D54-E9225542E09E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D07CD06E-6062-4037-9D54-E9225542E09E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D07CD06E-6062-4037-9D54-E9225542E09E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D07CD06E-6062-4037-9D54-E9225542E09E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49CC25E4-42C7-40A6-8E5A-91E7F7AE0312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49CC25E4-42C7-40A6-8E5A-91E7F7AE0312}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49CC25E4-42C7-40A6-8E5A-91E7F7AE0312}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49CC25E4-42C7-40A6-8E5A-91E7F7AE0312}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2E899538-CE3C-4A39-BD3C-0365B6E0BD63} = {05BC3FA3-E3B6-48D2-A520-704981366C45}
@@ -73,5 +85,7 @@ Global
 		{BAF45624-FB4A-42AA-8121-607195FD47CE} = {619E170F-A5C2-4F0A-B6CC-CDE17A045DDE}
 		{B77F5DB8-8774-4A73-AAC9-BEA955CA20EE} = {4B4C261C-C8D5-4EEA-90E3-E98708AA125A}
 		{9C727259-72A3-4DEC-A1D1-C254A97C41CE} = {B77F5DB8-8774-4A73-AAC9-BEA955CA20EE}
+		{D07CD06E-6062-4037-9D54-E9225542E09E} = {05BC3FA3-E3B6-48D2-A520-704981366C45}
+		{49CC25E4-42C7-40A6-8E5A-91E7F7AE0312} = {05BC3FA3-E3B6-48D2-A520-704981366C45}
 	EndGlobalSection
 EndGlobal

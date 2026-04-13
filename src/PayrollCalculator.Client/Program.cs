@@ -1,34 +1,34 @@
+using PayrollCalculator.Adapters;
+using PayrollCalculator.Adapters.Contracts;
+using PayrollCalculator.Engines;
+using PayrollCalculator.Engines.Contracts;
+using PayrollCalculator.Engines.Rules;
+using PayrollCalculator.Managers;
+using PayrollCalculator.Managers.Contracts;
+using PayrollCalculator.Repositories;
+using PayrollCalculator.Repositories.Contracts;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<ICompanyManager, CompanyManager>();
+builder.Services.AddScoped<IEmployeeManager, EmployeeManager>();
+builder.Services.AddScoped<IPayrollManager, PayrollManager>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
+builder.Services.AddScoped<IPaymentAdapter, PaymentProviderAdapter>();
+builder.Services.AddScoped<IEmailAdapter, EmailAdapter>();
+builder.Services.AddScoped<IPayCalculationEngine, PayCalculationEngine>();
+builder.Services.AddSingleton<PayrollRuleFactory>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-});
+app.UseSwagger();
+app.UseSwaggerUI();
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

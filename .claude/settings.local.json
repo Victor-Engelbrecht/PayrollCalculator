@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet new:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet build:*)",
+      "Bash(find /c/Dev/PayrollCalculator/src -type f -name \"*.cs\" ! -path \"*/obj/*\" ! -path \"*/bin/*\" -exec wc -l {} \\\\;)",
+      "Bash(find \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Domain\" -name \"*.cs\" -not -path \"*/obj/*\" -exec sed -i 's/PayrollCalculator\\\\.Abstractions/PayrollCalculator.Domain/g' {} +)",
+      "Bash(sed -i 's/using PayrollCalculator\\\\.Domain\\\\.Contracts;/using PayrollCalculator.Adapters.Contracts;/' \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Adapters/PaymentProviderAdapter.cs\")",
+      "Bash(sed -i 's/using PayrollCalculator\\\\.Domain\\\\.Contracts;/using PayrollCalculator.Adapters.Contracts;/' \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Adapters/EmailAdapter.cs\")",
+      "Bash(sed -i 's/using PayrollCalculator\\\\.Domain\\\\.Contracts;/using PayrollCalculator.Managers.Contracts;/' \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Managers/CompanyManager.cs\")",
+      "Bash(sed -i 's/using PayrollCalculator\\\\.Domain\\\\.Contracts;/using PayrollCalculator.Managers.Contracts;/' \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Managers/EmployeeManager.cs\")",
+      "Bash(sed -i 's/using PayrollCalculator\\\\.Domain\\\\.Contracts;/using PayrollCalculator.Managers.Contracts;/' \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Managers/PayrollManager.cs\")",
+      "Bash(sed -i 's/using PayrollCalculator\\\\.Domain\\\\.Contracts;/using PayrollCalculator.Managers.Contracts;/' \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Client/Workers/PayrollWorker.cs\")"
+    ]
+  }
+}
