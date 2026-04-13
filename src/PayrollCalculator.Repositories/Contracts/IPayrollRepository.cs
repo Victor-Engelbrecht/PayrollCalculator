@@ -13,4 +13,10 @@ public interface IPayrollRepository
     Task<IEnumerable<PayslipDetail>> GetPayslipsByPayrollIdAsync(int payrollId);
     Task<int> CreatePayslipAsync(PayslipDetail payslip);
     Task UpdatePayslipPaymentReferenceAsync(int payslipId, string paymentReference);
+
+    Task<int> CreateAdditionAsync(Addition addition);
+    Task<IEnumerable<Addition>> GetAdditionsByPayslipAsync(int payrollId, int employeeId);
+
+    Task<int> CreateDeductionAsync(Deduction deduction);
+    Task<IEnumerable<Deduction>> GetDeductionsByPayslipAsync(int payrollId, int employeeId);
 }

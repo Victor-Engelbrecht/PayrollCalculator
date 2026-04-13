@@ -14,6 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSingleton<IDbConnectionFactory, SqlServerConnectionFactory>();
+
 builder.Services.AddScoped<ICompanyManager, CompanyManager>();
 builder.Services.AddScoped<IEmployeeManager, EmployeeManager>();
 builder.Services.AddScoped<IPayrollManager, PayrollManager>();
@@ -26,6 +28,9 @@ builder.Services.AddScoped<IPayCalculationEngine, PayCalculationEngine>();
 builder.Services.AddSingleton<PayrollRuleFactory>();
 
 var app = builder.Build();
+
+var dbFactory = app.Services.GetRequiredService<IDbConnectionFactory>();
+await new DatabaseInitializer(dbFactory).InitializeAsync();
 
 app.UseSwagger();
 app.UseSwaggerUI();

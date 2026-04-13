@@ -28,7 +28,48 @@ public class PayrollManager : IPayrollManager
         _emailAdapter = emailAdapter;
     }
 
-    public Task<PayrollSummary> RunPayrollAsync(int companyId, DateTime periodStart, DateTime periodEnd) => throw new NotImplementedException();
+    public Task<PayrollSummary> RunPayrollAsync(int companyId, DateTime periodStart, DateTime periodEnd)
+    {
+        throw new NotImplementedException();
+
+        // Intended persistence shape once repositories are implemented:
+        //
+        // var employees = await _employeeRepository.GetByCompanyIdAsync(companyId);
+        // var payrollId = await _payrollRepository.CreateAsync(new Payroll { ... });
+        //
+        // foreach (var employee in employees)
+        // {
+        //     var rules  = /* build rules for employee */;
+        //     var result = _payCalculationEngine.Calculate(employee, rules);
+        //     var now    = DateTime.UtcNow;
+        //
+        //     await _payrollRepository.CreatePayslipAsync(new PayslipDetail { ... });
+        //
+        //     foreach (var item in result.LineItems)
+        //     {
+        //         if (item.Kind == PayslipLineItemKind.Addition)
+        //             await _payrollRepository.CreateAdditionAsync(new Addition
+        //             {
+        //                 EmployeeId  = employee.Id,
+        //                 PayrollId   = payrollId,
+        //                 Description = item.Description,
+        //                 Amount      = item.Amount,
+        //                 CreatedAt   = now,
+        //                 UpdatedAt   = now
+        //             });
+        //         else
+        //             await _payrollRepository.CreateDeductionAsync(new Deduction
+        //             {
+        //                 EmployeeId  = employee.Id,
+        //                 PayrollId   = payrollId,
+        //                 Description = item.Description,
+        //                 Amount      = item.Amount,
+        //                 CreatedAt   = now,
+        //                 UpdatedAt   = now
+        //             });
+        //     }
+        // }
+    }
     public Task<Payroll?> GetPayrollAsync(int payrollId) => throw new NotImplementedException();
     public Task<IEnumerable<PayslipDetail>> GetPayslipsAsync(int payrollId) => throw new NotImplementedException();
 }

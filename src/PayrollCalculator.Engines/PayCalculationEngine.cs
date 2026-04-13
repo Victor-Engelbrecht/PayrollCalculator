@@ -28,7 +28,8 @@ public class PayCalculationEngine : IPayCalculationEngine
             NetAmount       = context.NetPay,
             TotalAdditions  = context.TotalAdditions,
             TotalDeductions = context.TotalDeductions,
-            Violations      = violations
+            Violations      = violations,
+            LineItems       = context.LineItems.AsReadOnly()
         };
     }
 }
