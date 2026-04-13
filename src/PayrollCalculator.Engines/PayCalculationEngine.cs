@@ -8,39 +8,27 @@ public class PayCalculationEngine : IPayCalculationEngine
 {
     public PayCalculationResult Calculate(
         Employee employee,
-        IEnumerable<Addition> additions,
-        IEnumerable<Deduction> deductions,
         IEnumerable<IPayrollRule> rules)
     {
-        var additionList = additions.ToList();
-        var deductionList = deductions.ToList();
-
-        var totalAdditions = additionList.Sum(a => a.Amount);
-        var totalDeductions = deductionList.Sum(d => d.Amount);
-        var grossPay = employee.BaseSalary + totalAdditions;
-        var netPay = grossPay - totalDeductions;
-
-        var context = new PayCalculationContext
-        {
-            Employee = employee,
-            Additions = additionList,
-            Deductions = deductionList,
-            GrossPay = grossPay,
-            TotalDeductions = totalDeductions,
-            NetPay = netPay
-        };
-
+        var context    = new PayCalculationContext { Employee = employee };
         var violations = new List<RuleViolation>();
+        var ruleList   = rules.ToList();
 
-        foreach (var rule in rules)
+        foreach (var rule in ruleList.Where(r => r.Effect == PayrollRuleEffect.Addition))
+            rule.Apply(context, violations);
+
+        foreach (var rule in ruleList.Where(r => r.Effect == PayrollRuleEffect.Deduction))
+            rule.Apply(context, violations);
+
+        foreach (var rule in ruleList.Where(r => r.Effect == PayrollRuleEffect.Compliance))
             rule.Apply(context, violations);
 
         return new PayCalculationResult
         {
-            NetAmount = context.NetPay,
-            TotalAdditions = totalAdditions,
-            TotalDeductions = totalDeductions,
-            Violations = violations
+            NetAmount       = context.NetPay,
+            TotalAdditions  = context.TotalAdditions,
+            TotalDeductions = context.TotalDeductions,
+            Violations      = violations
         };
     }
 }

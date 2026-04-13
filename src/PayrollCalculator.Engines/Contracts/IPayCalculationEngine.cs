@@ -7,7 +7,5 @@ public interface IPayCalculationEngine
 {
     PayCalculationResult Calculate(
         Employee employee,
-        IEnumerable<Addition> additions,
-        IEnumerable<Deduction> deductions,
         IEnumerable<IPayrollRule> rules);
 }

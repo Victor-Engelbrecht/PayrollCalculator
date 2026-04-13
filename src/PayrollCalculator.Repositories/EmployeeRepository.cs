@@ -11,11 +11,4 @@ public class EmployeeRepository : IEmployeeRepository
     public Task UpdateAsync(Employee employee) => throw new NotImplementedException();
     public Task DeleteAsync(int id) => throw new NotImplementedException();
 
-    public Task<IEnumerable<Addition>> GetAdditionsByEmployeeIdAsync(int employeeId) => throw new NotImplementedException();
-    public Task<int> CreateAdditionAsync(Addition addition) => throw new NotImplementedException();
-    public Task DeleteAdditionAsync(int id) => throw new NotImplementedException();
-
-    public Task<IEnumerable<Deduction>> GetDeductionsByEmployeeIdAsync(int employeeId) => throw new NotImplementedException();
-    public Task<int> CreateDeductionAsync(Deduction deduction) => throw new NotImplementedException();
-    public Task DeleteDeductionAsync(int id) => throw new NotImplementedException();
 }

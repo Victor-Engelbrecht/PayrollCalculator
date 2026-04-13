@@ -2,10 +2,9 @@ namespace PayrollCalculator.Domain.Models;
 
 public record PayCalculationContext
 {
-    public Employee Employee { get; set; } = null!;
-    public List<Addition> Additions { get; set; } = [];
-    public List<Deduction> Deductions { get; set; } = [];
-    public decimal GrossPay { get; set; }
+    public Employee Employee       { get; init; } = null!;
+    public decimal TotalAdditions  { get; set; }
     public decimal TotalDeductions { get; set; }
-    public decimal NetPay { get; set; }
+    public decimal GrossPay        => Employee.BaseSalary + TotalAdditions;
+    public decimal NetPay          => GrossPay - TotalDeductions;
 }

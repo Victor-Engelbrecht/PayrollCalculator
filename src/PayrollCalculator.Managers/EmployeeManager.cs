@@ -37,33 +37,13 @@ public class EmployeeManager : IEmployeeManager
     public Task DeleteEmployeeAsync(int id) =>
         _employeeRepository.DeleteAsync(id);
 
-    public Task<IEnumerable<Addition>> GetAdditionsAsync(int employeeId) =>
-        _employeeRepository.GetAdditionsByEmployeeIdAsync(employeeId);
-
-    public Task<int> AddAdditionAsync(Addition addition) =>
-        _employeeRepository.CreateAdditionAsync(addition);
-
-    public Task RemoveAdditionAsync(int id) =>
-        _employeeRepository.DeleteAdditionAsync(id);
-
-    public Task<IEnumerable<Deduction>> GetDeductionsAsync(int employeeId) =>
-        _employeeRepository.GetDeductionsByEmployeeIdAsync(employeeId);
-
-    public Task<int> AddDeductionAsync(Deduction deduction) =>
-        _employeeRepository.CreateDeductionAsync(deduction);
-
-    public Task RemoveDeductionAsync(int id) =>
-        _employeeRepository.DeleteDeductionAsync(id);
-
     public async Task<PayCalculationResult> CalculatePayAsync(int employeeId)
     {
         var employee = await _employeeRepository.GetByIdAsync(employeeId)
             ?? throw new InvalidOperationException($"Employee {employeeId} not found.");
 
-        var additions = await _employeeRepository.GetAdditionsByEmployeeIdAsync(employeeId);
-        var deductions = await _employeeRepository.GetDeductionsByEmployeeIdAsync(employeeId);
         var rules = _ruleFactory.GetRules(employee);
 
-        return _payCalculationEngine.Calculate(employee, additions, deductions, rules);
+        return _payCalculationEngine.Calculate(employee, rules);
     }
 }

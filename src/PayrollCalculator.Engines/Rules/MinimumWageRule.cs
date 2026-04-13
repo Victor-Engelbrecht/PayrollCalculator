@@ -1,19 +1,18 @@
-
 using PayrollCalculator.Domain.Models;
 
 namespace PayrollCalculator.Engines.Rules;
 
-public class MinimumWageRule : IPayrollRule
+public class MinimumWageRule(decimal minimumNetPay) : IPayrollRule
 {
-    private const decimal MinimumMonthlyNetPay = 1500.00m;
+    public PayrollRuleEffect Effect => PayrollRuleEffect.Compliance;
 
     public void Apply(PayCalculationContext context, IList<RuleViolation> violations)
     {
-        if (context.NetPay < MinimumMonthlyNetPay)
+        if (context.NetPay < minimumNetPay)
             violations.Add(new RuleViolation
             {
                 RuleName = nameof(MinimumWageRule),
-                Message = $"Net pay {context.NetPay:C} is below the minimum of {MinimumMonthlyNetPay:C}."
+                Message  = $"Net pay {context.NetPay:C} is below the minimum of {minimumNetPay:C}."
             });
     }
 }

@@ -12,7 +12,8 @@
       "Bash(sed -i 's/using PayrollCalculator\\\\.Domain\\\\.Contracts;/using PayrollCalculator.Managers.Contracts;/' \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Managers/CompanyManager.cs\")",
       "Bash(sed -i 's/using PayrollCalculator\\\\.Domain\\\\.Contracts;/using PayrollCalculator.Managers.Contracts;/' \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Managers/EmployeeManager.cs\")",
       "Bash(sed -i 's/using PayrollCalculator\\\\.Domain\\\\.Contracts;/using PayrollCalculator.Managers.Contracts;/' \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Managers/PayrollManager.cs\")",
-      "Bash(sed -i 's/using PayrollCalculator\\\\.Domain\\\\.Contracts;/using PayrollCalculator.Managers.Contracts;/' \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Client/Workers/PayrollWorker.cs\")"
+      "Bash(sed -i 's/using PayrollCalculator\\\\.Domain\\\\.Contracts;/using PayrollCalculator.Managers.Contracts;/' \"c:/Dev/PayrollCalculator/src/PayrollCalculator.Client/Workers/PayrollWorker.cs\")",
+      "Bash(xargs grep:*)"
     ]
   }
 }

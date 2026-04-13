@@ -75,66 +75,6 @@ public class EmployeesController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("employees/{id}/additions")]
-    public async Task<ActionResult<IEnumerable<AdditionResponse>>> GetAdditions(int id)
-    {
-        var additions = await _employeeManager.GetAdditionsAsync(id);
-        return Ok(additions.Select(a => new AdditionResponse(a.Id, a.EmployeeId, a.PayrollId, a.Description, a.Amount)));
-    }
-
-    [HttpPost("employees/{id}/additions")]
-    public async Task<ActionResult<AdditionResponse>> AddAddition(int id, AddAdditionRequest request)
-    {
-        var addition = new Addition
-        {
-            EmployeeId = id,
-            Description = request.Description,
-            Amount = request.Amount
-        };
-
-        var additionId = await _employeeManager.AddAdditionAsync(addition);
-        var additions = await _employeeManager.GetAdditionsAsync(id);
-        var created = additions.First(a => a.Id == additionId);
-        return CreatedAtAction(nameof(GetAdditions), new { id }, new AdditionResponse(created.Id, created.EmployeeId, created.PayrollId, created.Description, created.Amount));
-    }
-
-    [HttpDelete("employees/{employeeId}/additions/{additionId}")]
-    public async Task<IActionResult> RemoveAddition(int employeeId, int additionId)
-    {
-        await _employeeManager.RemoveAdditionAsync(additionId);
-        return NoContent();
-    }
-
-    [HttpGet("employees/{id}/deductions")]
-    public async Task<ActionResult<IEnumerable<DeductionResponse>>> GetDeductions(int id)
-    {
-        var deductions = await _employeeManager.GetDeductionsAsync(id);
-        return Ok(deductions.Select(d => new DeductionResponse(d.Id, d.EmployeeId, d.PayrollId, d.Description, d.Amount)));
-    }
-
-    [HttpPost("employees/{id}/deductions")]
-    public async Task<ActionResult<DeductionResponse>> AddDeduction(int id, AddDeductionRequest request)
-    {
-        var deduction = new Deduction
-        {
-            EmployeeId = id,
-            Description = request.Description,
-            Amount = request.Amount
-        };
-
-        var deductionId = await _employeeManager.AddDeductionAsync(deduction);
-        var deductions = await _employeeManager.GetDeductionsAsync(id);
-        var created = deductions.First(d => d.Id == deductionId);
-        return CreatedAtAction(nameof(GetDeductions), new { id }, new DeductionResponse(created.Id, created.EmployeeId, created.PayrollId, created.Description, created.Amount));
-    }
-
-    [HttpDelete("employees/{employeeId}/deductions/{deductionId}")]
-    public async Task<IActionResult> RemoveDeduction(int employeeId, int deductionId)
-    {
-        await _employeeManager.RemoveDeductionAsync(deductionId);
-        return NoContent();
-    }
-
     private static EmployeeResponse ToResponse(Employee e) =>
         new(e.Id, e.CompanyId, e.FirstName, e.LastName, e.Email, e.BaseSalary, e.BankAccountNumber, e.CreatedAt, e.UpdatedAt);
 }

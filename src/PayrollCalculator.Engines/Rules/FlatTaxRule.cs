@@ -2,13 +2,12 @@ using PayrollCalculator.Domain.Models;
 
 namespace PayrollCalculator.Engines.Rules;
 
-public class FlatTaxRule : IPayrollRule
+public class FlatTaxRule(decimal taxRate) : IPayrollRule
 {
-    private const decimal TaxRate = 0.20m;
+    public PayrollRuleEffect Effect => PayrollRuleEffect.Deduction;
 
     public void Apply(PayCalculationContext context, IList<RuleViolation> violations)
     {
-        var tax = Math.Round(context.GrossPay * TaxRate, 2);
-        context.NetPay -= tax;
+        context.TotalDeductions += Math.Round(context.GrossPay * taxRate, 2);
     }
 }
