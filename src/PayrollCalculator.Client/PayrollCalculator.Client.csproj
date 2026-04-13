@@ -3,6 +3,8 @@
   <ItemGroup>
     <ProjectReference Include="..\PayrollCalculator.Managers\PayrollCalculator.Managers.csproj" />
     <ProjectReference Include="..\PayrollCalculator.Utilities\PayrollCalculator.Utilities.csproj" />
+    <ProjectReference Include="..\PayrollCalculator.Repositories\PayrollCalculator.Repositories.csproj" />
+    <ProjectReference Include="..\PayrollCalculator.Adapters\PayrollCalculator.Adapters.csproj" />
   </ItemGroup>
 
   <ItemGroup>
