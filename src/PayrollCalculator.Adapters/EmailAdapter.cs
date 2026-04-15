@@ -5,5 +5,5 @@ namespace PayrollCalculator.Adapters;
 
 public class EmailAdapter : IEmailAdapter
 {
-    public Task SendPayslipAsync(PayslipEmailRequest request) => throw new NotImplementedException();
+    public Task SendPayslipAsync(PayslipEmailRequest request) => Task.CompletedTask;
 }

@@ -27,10 +27,12 @@ public class CompanyRepository : ICompanyRepository
     public async Task<int> CreateAsync(Company company)
     {
         using var c = _connectionFactory.CreateConnection();
+        var now = DateTime.UtcNow;
         return await c.QuerySingleAsync<int>(@"
             INSERT INTO Companies (Name, RegistrationNumber, ContactEmail, CreatedAt, UpdatedAt)
             VALUES (@Name, @RegistrationNumber, @ContactEmail, @CreatedAt, @UpdatedAt);
-            SELECT last_insert_rowid();", company);
+            SELECT CAST(SCOPE_IDENTITY() AS INT);",
+            company with { CreatedAt = now, UpdatedAt = now });
     }
 
     public async Task UpdateAsync(Company company)
@@ -42,7 +44,8 @@ public class CompanyRepository : ICompanyRepository
                 RegistrationNumber = @RegistrationNumber,
                 ContactEmail       = @ContactEmail,
                 UpdatedAt          = @UpdatedAt
-            WHERE Id = @Id", company);
+            WHERE Id = @Id",
+            company with { UpdatedAt = DateTime.UtcNow });
     }
 
     public async Task DeleteAsync(int id)

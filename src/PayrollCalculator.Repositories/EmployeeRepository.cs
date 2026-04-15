@@ -28,12 +28,14 @@ public class EmployeeRepository : IEmployeeRepository
     public async Task<int> CreateAsync(Employee employee)
     {
         using var c = _connectionFactory.CreateConnection();
+        var now = DateTime.UtcNow;
         return await c.QuerySingleAsync<int>(@"
             INSERT INTO Employees
                 (CompanyId, FirstName, LastName, Email, BaseSalary, BankAccountNumber, CreatedAt, UpdatedAt)
             VALUES
                 (@CompanyId, @FirstName, @LastName, @Email, @BaseSalary, @BankAccountNumber, @CreatedAt, @UpdatedAt);
-            SELECT last_insert_rowid();", employee);
+            SELECT CAST(SCOPE_IDENTITY() AS INT);",
+            employee with { CreatedAt = now, UpdatedAt = now });
     }
 
     public async Task UpdateAsync(Employee employee)
@@ -47,7 +49,8 @@ public class EmployeeRepository : IEmployeeRepository
                 BaseSalary        = @BaseSalary,
                 BankAccountNumber = @BankAccountNumber,
                 UpdatedAt         = @UpdatedAt
-            WHERE Id = @Id", employee);
+            WHERE Id = @Id",
+            employee with { UpdatedAt = DateTime.UtcNow });
     }
 
     public async Task DeleteAsync(int id)

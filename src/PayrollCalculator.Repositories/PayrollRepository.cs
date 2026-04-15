@@ -30,12 +30,14 @@ public class PayrollRepository : IPayrollRepository
     public async Task<int> CreateAsync(Payroll payroll)
     {
         using var c = _connectionFactory.CreateConnection();
+        var now = DateTime.UtcNow;
         return await c.QuerySingleAsync<int>(@"
             INSERT INTO Payrolls
                 (CompanyId, PeriodStart, PeriodEnd, RunAt, Status, CreatedAt, UpdatedAt)
             VALUES
                 (@CompanyId, @PeriodStart, @PeriodEnd, @RunAt, @Status, @CreatedAt, @UpdatedAt);
-            SELECT last_insert_rowid();", payroll);
+            SELECT CAST(SCOPE_IDENTITY() AS INT);",
+            payroll with { CreatedAt = now, UpdatedAt = now });
     }
 
     public async Task UpdateStatusAsync(int payrollId, string status)
@@ -68,6 +70,7 @@ public class PayrollRepository : IPayrollRepository
     public async Task<int> CreatePayslipAsync(PayslipDetail payslip)
     {
         using var c = _connectionFactory.CreateConnection();
+        var now = DateTime.UtcNow;
         return await c.QuerySingleAsync<int>(@"
             INSERT INTO Payslips
                 (PayrollId, EmployeeId, BaseSalary, TotalAdditions, TotalDeductions,
@@ -75,7 +78,8 @@ public class PayrollRepository : IPayrollRepository
             VALUES
                 (@PayrollId, @EmployeeId, @BaseSalary, @TotalAdditions, @TotalDeductions,
                  @NetAmount, @PaymentReference, @CreatedAt, @UpdatedAt);
-            SELECT last_insert_rowid();", payslip);
+            SELECT CAST(SCOPE_IDENTITY() AS INT);",
+            payslip with { CreatedAt = now, UpdatedAt = now });
     }
 
     public async Task UpdatePayslipPaymentReferenceAsync(int payslipId, string paymentReference)
@@ -94,12 +98,14 @@ public class PayrollRepository : IPayrollRepository
     public async Task<int> CreateAdditionAsync(Addition addition)
     {
         using var c = _connectionFactory.CreateConnection();
+        var now = DateTime.UtcNow;
         return await c.QuerySingleAsync<int>(@"
             INSERT INTO Additions
                 (EmployeeId, PayrollId, Description, Amount, CreatedAt, UpdatedAt)
             VALUES
                 (@EmployeeId, @PayrollId, @Description, @Amount, @CreatedAt, @UpdatedAt);
-            SELECT last_insert_rowid();", addition);
+            SELECT CAST(SCOPE_IDENTITY() AS INT);",
+            addition with { CreatedAt = now, UpdatedAt = now });
     }
 
     public async Task<IEnumerable<Addition>> GetAdditionsByPayslipAsync(int payrollId, int employeeId)
@@ -115,12 +121,14 @@ public class PayrollRepository : IPayrollRepository
     public async Task<int> CreateDeductionAsync(Deduction deduction)
     {
         using var c = _connectionFactory.CreateConnection();
+        var now = DateTime.UtcNow;
         return await c.QuerySingleAsync<int>(@"
             INSERT INTO Deductions
                 (EmployeeId, PayrollId, Description, Amount, CreatedAt, UpdatedAt)
             VALUES
                 (@EmployeeId, @PayrollId, @Description, @Amount, @CreatedAt, @UpdatedAt);
-            SELECT last_insert_rowid();", deduction);
+            SELECT CAST(SCOPE_IDENTITY() AS INT);",
+            deduction with { CreatedAt = now, UpdatedAt = now });
     }
 
     public async Task<IEnumerable<Deduction>> GetDeductionsByPayslipAsync(int payrollId, int employeeId)
