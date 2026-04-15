@@ -1,0 +1,6 @@
+FROM mcr.microsoft.com/mssql/server:2022-latest
+USER root
+COPY database/scripts /scripts/
+COPY database/init.sh /init.sh
+RUN chmod +x /init.sh
+ENTRYPOINT ["/bin/bash", "/init.sh"]
