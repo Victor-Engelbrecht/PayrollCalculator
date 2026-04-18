@@ -11,10 +11,12 @@ namespace PayrollCalculator.Client.Controllers;
 public class CompaniesController : ControllerBase
 {
     private readonly ICompanyManager _companyManager;
+    private readonly IPayrollManager _payrollManager;
 
-    public CompaniesController(ICompanyManager companyManager)
+    public CompaniesController(ICompanyManager companyManager, IPayrollManager payrollManager)
     {
         _companyManager = companyManager;
+        _payrollManager = payrollManager;
     }
 
     [HttpGet]
@@ -69,6 +71,22 @@ public class CompaniesController : ControllerBase
     {
         await _companyManager.DeleteCompanyAsync(id);
         return NoContent();
+    }
+
+    [HttpPost("{id}/payroll/run")]
+    public async Task<ActionResult<PayrollSummaryResponse>> RunPayroll(int id)
+    {
+        var company = await _companyManager.GetCompanyAsync(id);
+        if (company is null) return NotFound();
+
+        var summary = await _payrollManager.RunPayrollAsync(id);
+
+        return Ok(new PayrollSummaryResponse(
+            summary.PayrollId,
+            summary.EmployeeCount,
+            summary.TotalNetPaid,
+            summary.Violations.Select(v => new RuleViolationResponse(v.RuleName, v.Message)).ToList(),
+            summary.CompletedAt));
     }
 
     private static CompanyResponse ToResponse(Company c) =>

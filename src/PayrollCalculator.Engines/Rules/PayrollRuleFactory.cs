@@ -1,12 +1,16 @@
 using PayrollCalculator.Domain.Models;
+using PayrollCalculator.Engines.Contracts;
 
 namespace PayrollCalculator.Engines.Rules;
 
-public class PayrollRuleFactory
+public sealed class PayrollRuleFactory(IEnumerable<IPayrollRuleProvider> providers) : IPayrollRuleFactory
 {
-    public IReadOnlyList<IPayrollRule> GetRules(Employee employee)
+    public async Task<IReadOnlyList<IPayrollRule>> GetRulesAsync(Company company, Employee employee)
     {
-        // TODO: load rule config per employee/company from DB
-        return [new BaseSalaryRule(), new FlatTaxRule(0.20m), new MinimumWageRule(1500.00m)];
+        var context = new PayrollRuleContext { Company = company, Employee = employee };
+        var rules = new List<IPayrollRule>();
+        foreach (var provider in providers)
+            rules.AddRange(await provider.GetRulesAsync(context));
+        return rules.AsReadOnly();
     }
 }

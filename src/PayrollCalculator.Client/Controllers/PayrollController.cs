@@ -19,7 +19,7 @@ public class PayrollController : ControllerBase
     [HttpPost("run")]
     public async Task<ActionResult<PayrollSummaryResponse>> RunPayroll(RunPayrollRequest request)
     {
-        var summary = await _payrollManager.RunPayrollAsync(request.CompanyId, request.PeriodStart, request.PeriodEnd);
+        var summary = await _payrollManager.RunPayrollAsync(request.CompanyId);
 
         var response = new PayrollSummaryResponse(
             summary.PayrollId,

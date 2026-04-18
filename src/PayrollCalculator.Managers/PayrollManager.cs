@@ -2,7 +2,6 @@ using PayrollCalculator.Adapters.Contracts;
 using PayrollCalculator.Domain.Models;
 using PayrollCalculator.Domain.Models.Adapters;
 using PayrollCalculator.Engines.Contracts;
-using PayrollCalculator.Engines.Rules;
 using PayrollCalculator.Managers.Contracts;
 using PayrollCalculator.Repositories.Contracts;
 using PayrollCalculator.Utilities.Contracts;
@@ -12,23 +11,29 @@ namespace PayrollCalculator.Managers;
 public class PayrollManager : IPayrollManager
 {
     private readonly IPayCalculationEngine _payCalculationEngine;
+    private readonly IPayrollNotificationEngine _notificationEngine;
+    private readonly ICompanyRepository _companyRepository;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IPayrollRepository _payrollRepository;
     private readonly IPaymentAdapter _paymentAdapter;
     private readonly IEmailAdapter _emailAdapter;
-    private readonly PayrollRuleFactory _ruleFactory;
+    private readonly IPayrollRuleFactory _ruleFactory;
     private readonly IWideEventContext _wideEvent;
 
     public PayrollManager(
         IPayCalculationEngine payCalculationEngine,
+        IPayrollNotificationEngine notificationEngine,
+        ICompanyRepository companyRepository,
         IEmployeeRepository employeeRepository,
         IPayrollRepository payrollRepository,
         IPaymentAdapter paymentAdapter,
         IEmailAdapter emailAdapter,
-        PayrollRuleFactory ruleFactory,
+        IPayrollRuleFactory ruleFactory,
         IWideEventContext wideEvent)
     {
         _payCalculationEngine = payCalculationEngine;
+        _notificationEngine = notificationEngine;
+        _companyRepository = companyRepository;
         _employeeRepository = employeeRepository;
         _payrollRepository = payrollRepository;
         _paymentAdapter = paymentAdapter;
@@ -37,26 +42,29 @@ public class PayrollManager : IPayrollManager
         _wideEvent = wideEvent;
     }
 
-    public async Task<PayrollSummary> RunPayrollAsync(int companyId, DateTime periodStart, DateTime periodEnd)
+    public async Task<PayrollSummary> RunPayrollAsync(int companyId)
     {
         _wideEvent.Set("operation", "payroll.run");
         _wideEvent.Set("company_id", companyId);
-        _wideEvent.Set("period_start", periodStart);
-        _wideEvent.Set("period_end", periodEnd);
+
+        var company = await _companyRepository.GetByIdAsync(companyId)
+            ?? throw new InvalidOperationException($"Company {companyId} not found.");
 
         var employees = (await _employeeRepository.GetByCompanyIdAsync(companyId)).ToList();
         _wideEvent.Set("employee_count", employees.Count);
 
+        var runAt = DateTime.UtcNow;
         var payrollId = await _payrollRepository.CreateAsync(new Payroll
         {
             CompanyId = companyId,
-            PeriodStart = periodStart,
-            PeriodEnd = periodEnd,
-            RunAt = DateTime.UtcNow,
+            PeriodStart = runAt,
+            PeriodEnd = runAt,
+            RunAt = runAt,
             Status = "Running"
         });
         _wideEvent.Set("payroll_id", payrollId);
 
+        var completedPayslips = new List<EmployeePayslip>();
         var allViolations = new List<RuleViolation>();
         decimal totalNetPaid = 0;
         decimal totalAdditions = 0;
@@ -70,7 +78,7 @@ public class PayrollManager : IPayrollManager
 
         foreach (var employee in employees)
         {
-            var rules = _ruleFactory.GetRules(employee);
+            var rules = await _ruleFactory.GetRulesAsync(company, employee);
             var result = _payCalculationEngine.Calculate(employee, rules);
 
             var payslipId = await _payrollRepository.CreatePayslipAsync(new PayslipDetail
@@ -83,6 +91,20 @@ public class PayrollManager : IPayrollManager
                 NetAmount = result.NetAmount
             });
             payslipsGenerated++;
+            completedPayslips.Add(new EmployeePayslip
+            {
+                Employee = employee,
+                Payslip = new PayslipDetail
+                {
+                    Id              = payslipId,
+                    PayrollId       = payrollId,
+                    EmployeeId      = employee.Id,
+                    BaseSalary      = employee.BaseSalary,
+                    TotalAdditions  = result.TotalAdditions,
+                    TotalDeductions = result.TotalDeductions,
+                    NetAmount       = result.NetAmount
+                }
+            });
 
             foreach (var item in result.LineItems)
             {
@@ -121,22 +143,23 @@ public class PayrollManager : IPayrollManager
                     paymentFailures++;
             }
 
+            allViolations.AddRange(result.Violations);
+            totalNetPaid += result.NetAmount;
+            totalAdditions += result.TotalAdditions;
+            totalDeductions += result.TotalDeductions;
+            totalGross += employee.BaseSalary + result.TotalAdditions;
+        }
+
+        var notifications = _notificationEngine.BuildNotifications(completedPayslips);
+        foreach (var notification in notifications)
+        {
             try
             {
                 await _emailAdapter.SendPayslipAsync(new PayslipEmailRequest
                 {
-                    RecipientEmail = employee.Email,
-                    RecipientName = $"{employee.FirstName} {employee.LastName}",
-                    Payslip = new PayslipDetail
-                    {
-                        Id = payslipId,
-                        PayrollId = payrollId,
-                        EmployeeId = employee.Id,
-                        BaseSalary = employee.BaseSalary,
-                        TotalAdditions = result.TotalAdditions,
-                        TotalDeductions = result.TotalDeductions,
-                        NetAmount = result.NetAmount
-                    }
+                    RecipientEmail = notification.RecipientEmail,
+                    RecipientName  = notification.RecipientName,
+                    Payslip        = notification.Payslip
                 });
                 emailsSent++;
             }
@@ -145,12 +168,6 @@ public class PayrollManager : IPayrollManager
                 emailFailures++;
                 throw;
             }
-
-            allViolations.AddRange(result.Violations);
-            totalNetPaid += result.NetAmount;
-            totalAdditions += result.TotalAdditions;
-            totalDeductions += result.TotalDeductions;
-            totalGross += employee.BaseSalary + result.TotalAdditions;
         }
 
         await _payrollRepository.UpdateStatusAsync(payrollId, "Completed");

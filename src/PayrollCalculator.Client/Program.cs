@@ -5,6 +5,7 @@ using PayrollCalculator.Client.Middleware;
 using PayrollCalculator.Engines;
 using PayrollCalculator.Engines.Contracts;
 using PayrollCalculator.Engines.Rules;
+using PayrollCalculator.Managers.RuleProviders;
 using PayrollCalculator.Managers;
 using PayrollCalculator.Managers.Contracts;
 using PayrollCalculator.Repositories;
@@ -35,7 +36,12 @@ builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
 builder.Services.AddScoped<IPaymentAdapter, PaymentProviderAdapter>();
 builder.Services.AddScoped<IEmailAdapter, EmailAdapter>();
 builder.Services.AddScoped<IPayCalculationEngine, PayCalculationEngine>();
-builder.Services.AddSingleton<PayrollRuleFactory>();
+builder.Services.AddScoped<IPayrollNotificationEngine, PayrollNotificationEngine>();
+builder.Services.AddScoped<IPayrollRuleProvider, CoreRulesProvider>();
+builder.Services.AddScoped<IPayrollRuleProvider, CompanyRulesProvider>();
+builder.Services.AddScoped<IPayrollRuleProvider, EmployeeRulesProvider>();
+builder.Services.AddScoped<IPayrollRuleProvider, CountryRulesProvider>();
+builder.Services.AddScoped<IPayrollRuleFactory, PayrollRuleFactory>();
 
 var app = builder.Build();
 

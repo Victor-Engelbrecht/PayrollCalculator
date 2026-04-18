@@ -1,6 +1,5 @@
 using PayrollCalculator.Domain.Models;
 using PayrollCalculator.Engines.Contracts;
-using PayrollCalculator.Engines.Rules;
 using PayrollCalculator.Managers.Contracts;
 using PayrollCalculator.Repositories.Contracts;
 using PayrollCalculator.Utilities.Contracts;
@@ -10,17 +9,20 @@ namespace PayrollCalculator.Managers;
 public class EmployeeManager : IEmployeeManager
 {
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly ICompanyRepository _companyRepository;
     private readonly IPayCalculationEngine _payCalculationEngine;
-    private readonly PayrollRuleFactory _ruleFactory;
+    private readonly IPayrollRuleFactory _ruleFactory;
     private readonly IWideEventContext _wideEvent;
 
     public EmployeeManager(
         IEmployeeRepository employeeRepository,
+        ICompanyRepository companyRepository,
         IPayCalculationEngine payCalculationEngine,
-        PayrollRuleFactory ruleFactory,
+        IPayrollRuleFactory ruleFactory,
         IWideEventContext wideEvent)
     {
         _employeeRepository = employeeRepository;
+        _companyRepository = companyRepository;
         _payCalculationEngine = payCalculationEngine;
         _ruleFactory = ruleFactory;
         _wideEvent = wideEvent;
@@ -74,7 +76,10 @@ public class EmployeeManager : IEmployeeManager
 
         _wideEvent.Set("company_id", employee.CompanyId);
 
-        var rules = _ruleFactory.GetRules(employee);
+        var company = await _companyRepository.GetByIdAsync(employee.CompanyId)
+            ?? throw new InvalidOperationException($"Company {employee.CompanyId} not found.");
+
+        var rules = await _ruleFactory.GetRulesAsync(company, employee);
         var result = _payCalculationEngine.Calculate(employee, rules);
 
         _wideEvent.Set("net_amount", result.NetAmount);
