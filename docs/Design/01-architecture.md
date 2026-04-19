@@ -36,11 +36,13 @@ graph TD
         CompanyMgr[CompanyManager]
         EmployeeMgr[EmployeeManager]
         PayrollMgr[PayrollManager]
+        RuleProviders[Rule Providers\nCoreRulesProvider\nCompanyRulesProvider\nCountryRulesProvider\nEmployeeRulesProvider]
     end
 
     subgraph tier_engines["Engine Tier — PayrollCalculator.Engines"]
         PayCalcEng[PayCalculationEngine]
-        AuditEng[AuditEngine]
+        NotifEng[PayrollNotificationEngine]
+        RuleFactory[PayrollRuleFactory]
     end
 
     subgraph tier_accessors["Accessor Tier"]
@@ -48,8 +50,8 @@ graph TD
             CompanyRepo[CompanyRepository]
             EmployeeRepo[EmployeeRepository]
             PayrollRepo[PayrollRepository]
-            PayslipRepo[PayslipRepository]
-            AddDeductRepo[AdditionDeductionRepository]
+            CompanyConfigRepo[CompanyPayrollConfigRepository]
+            CountryConfigRepo[CountryPayrollConfigRepository]
         end
         subgraph adapters["Adapters — PayrollCalculator.Adapters"]
             PaymentAdp[PaymentProviderAdapter]
@@ -64,7 +66,7 @@ graph TD
     end
 
     subgraph tier_shared["Shared — referenced by all tiers"]
-        Abstractions[PayrollCalculator.Abstractions\nDomain Models]
+        Domain[PayrollCalculator.Domain\nDomain Models]
         Utilities[PayrollCalculator.Utilities]
     end
 
@@ -77,18 +79,20 @@ graph TD
     API --> PayrollMgr
 
     %% Managers → Engines
-    CompanyMgr --> PayCalcEng
+    EmployeeMgr --> PayCalcEng
     PayrollMgr --> PayCalcEng
-    PayrollMgr --> AuditEng
+    PayrollMgr --> NotifEng
+    PayrollMgr --> RuleFactory
+    EmployeeMgr --> RuleFactory
+    RuleFactory --> RuleProviders
 
     %% Managers → Repositories
     CompanyMgr --> CompanyRepo
     EmployeeMgr --> EmployeeRepo
-    EmployeeMgr --> AddDeductRepo
     PayrollMgr --> EmployeeRepo
     PayrollMgr --> PayrollRepo
-    PayrollMgr --> PayslipRepo
-    PayrollMgr --> AddDeductRepo
+    RuleProviders --> CompanyConfigRepo
+    RuleProviders --> CountryConfigRepo
 
     %% Managers → Adapters
     PayrollMgr --> PaymentAdp
@@ -98,8 +102,8 @@ graph TD
     CompanyRepo --> SqlServer
     EmployeeRepo --> SqlServer
     PayrollRepo --> SqlServer
-    PayslipRepo --> SqlServer
-    AddDeductRepo --> SqlServer
+    CompanyConfigRepo --> SqlServer
+    CountryConfigRepo --> SqlServer
 
     %% Adapters → External Services
     PaymentAdp --> PaymentAPI
@@ -115,17 +119,22 @@ graph TD
     classDef sharedStyle fill:#F8F8F8,color:#333,stroke:#ccc,stroke-dasharray:5 5
 
     class API clientStyle
-    class CompanyMgr,EmployeeMgr,PayrollMgr managerStyle
-    class PayCalcEng,AuditEng engineStyle
-    class CompanyRepo,EmployeeRepo,PayrollRepo,PayslipRepo,AddDeductRepo repoStyle
+    class CompanyMgr,EmployeeMgr,PayrollMgr,RuleProviders managerStyle
+    class PayCalcEng,NotifEng,RuleFactory engineStyle
+    class CompanyRepo,EmployeeRepo,PayrollRepo,CompanyConfigRepo,CountryConfigRepo repoStyle
     class PaymentAdp,EmailAdp adapterStyle
     class SqlServer,PaymentAPI,EmailSvc,HTTPClient externalStyle
-    class Abstractions,Utilities sharedStyle
+    class Domain,Utilities sharedStyle
 ```
 
 ## Key Design Decisions
 
 1. **PayrollManager is the only orchestrator for payroll runs.** It calls both Adapters (payment, email) — this is deliberate. No separate "PaymentManager" or "EmailManager" exists because IDesign forbids Manager-to-Manager calls, and these are not independent use cases.
-2. **Engines receive and return value objects only.** `PayCalculationEngine` takes salary + additions + deductions and returns a net amount — no database access, no side effects.
-3. **`AuditEngine` is logic, not persistence.** It computes audit/summary data. `PayrollManager` is responsible for persisting the result via a Repository.
+
+2. **Engines are pure — no entity data crosses the engine boundary.** `PayCalculationEngine.Calculate` receives only pre-configured rule objects; it never sees an `Employee` or `Company`. All entity data is loaded by providers (Manager tier) and baked into rule constructors before the engine is called. See [04-rules-providers.md](04-rules-providers.md).
+
+3. **Rule providers own all data-loading for pay calculation.** `CoreRulesProvider`, `CompanyRulesProvider`, `CountryRulesProvider`, and `EmployeeRulesProvider` call their respective repositories and inject loaded values (salary, tax rate, minimum wage) into rule constructors. The engine never needs to know where those values came from.
+
 4. **Adapters are treated as Accessors.** They sit in the same tier as Repositories and are called only by Managers.
+
+5. **`PayrollRuleFactory` aggregates providers via DI.** All registered `IPayrollRuleProvider` implementations are injected as a collection. Adding a new provider is a two-step operation: implement `IPayrollRuleProvider` and register it in `Program.cs` — no factory code changes.

@@ -1,80 +1,93 @@
 using PayrollCalculator.Domain.Models;
 using PayrollCalculator.Engines.Rules;
+using PayrollCalculator.UnitTests.Builders;
 
 namespace PayrollCalculator.UnitTests.EngineTests;
 
 [TestFixture]
 public class BaseSalaryRuleTests
 {
-    private static PayCalculationContext MakeContext(decimal baseSalary) => new()
-    {
-        Employee = new Employee { BaseSalary = baseSalary }
-    };
-
     [Test]
-    public void Apply_AddsSalaryToTotalAdditions()
+    public void Given_BaseSalaryRule_When_Applied_Then_SalaryIsAddedToTotalAdditions()
     {
-        var rule    = new BaseSalaryRule();
-        var context = MakeContext(5000m);
+        // Given
+        var rule    = new BaseSalaryRule(5000m);
+        var context = new PayCalculationContextBuilder().Build();
 
+        // When
         rule.Apply(context, []);
 
+        // Then
         Assert.That(context.TotalAdditions, Is.EqualTo(5000m));
     }
 
     [Test]
-    public void Apply_WithZeroSalary_AddZeroToTotalAdditions()
+    public void Given_BaseSalaryRuleWithZeroSalary_When_Applied_Then_TotalAdditionsIsZero()
     {
-        var rule    = new BaseSalaryRule();
-        var context = MakeContext(0m);
+        // Given
+        var rule    = new BaseSalaryRule(0m);
+        var context = new PayCalculationContextBuilder().Build();
 
+        // When
         rule.Apply(context, []);
 
+        // Then
         Assert.That(context.TotalAdditions, Is.EqualTo(0m));
     }
 
     [Test]
-    public void Apply_AddsLineItemWithCorrectRuleName()
+    public void Given_BaseSalaryRule_When_Applied_Then_LineItemHasCorrectRuleName()
     {
-        var rule    = new BaseSalaryRule();
-        var context = MakeContext(3000m);
+        // Given
+        var rule    = new BaseSalaryRule(3000m);
+        var context = new PayCalculationContextBuilder().Build();
 
+        // When
         rule.Apply(context, []);
 
+        // Then
         Assert.That(context.LineItems, Has.Count.EqualTo(1));
         Assert.That(context.LineItems[0].RuleName, Is.EqualTo(nameof(BaseSalaryRule)));
     }
 
     [Test]
-    public void Apply_AddsLineItemWithCorrectAmountAndKind()
+    public void Given_BaseSalaryRule_When_Applied_Then_LineItemHasCorrectAmountAndKind()
     {
-        var rule    = new BaseSalaryRule();
-        var context = MakeContext(3000m);
+        // Given
+        var rule    = new BaseSalaryRule(3000m);
+        var context = new PayCalculationContextBuilder().Build();
 
+        // When
         rule.Apply(context, []);
 
+        // Then
         var item = context.LineItems[0];
         Assert.That(item.Amount, Is.EqualTo(3000m));
         Assert.That(item.Kind,   Is.EqualTo(PayslipLineItemKind.Addition));
     }
 
     [Test]
-    public void Apply_DoesNotAddViolations()
+    public void Given_BaseSalaryRule_When_Applied_Then_NoViolationsAreAdded()
     {
-        var rule       = new BaseSalaryRule();
-        var context    = MakeContext(5000m);
+        // Given
+        var rule       = new BaseSalaryRule(5000m);
+        var context    = new PayCalculationContextBuilder().Build();
         var violations = new List<RuleViolation>();
 
+        // When
         rule.Apply(context, violations);
 
+        // Then
         Assert.That(violations, Is.Empty);
     }
 
     [Test]
-    public void Effect_IsAddition()
+    public void Given_BaseSalaryRule_When_EffectIsRead_Then_EffectIsAddition()
     {
-        var rule = new BaseSalaryRule();
+        // Given
+        var rule = new BaseSalaryRule(0m);
 
+        // When / Then
         Assert.That(rule.Effect, Is.EqualTo(PayrollRuleEffect.Addition));
     }
 }

@@ -1,14 +1,19 @@
 using PayrollCalculator.Domain.Models;
 using PayrollCalculator.Engines.Contracts;
 using PayrollCalculator.Engines.Rules;
+using PayrollCalculator.Repositories.Contracts;
 
 namespace PayrollCalculator.Managers.RuleProviders;
 
-public sealed class CompanyRulesProvider : IPayrollRuleProvider
+public sealed class CompanyRulesProvider(
+    ICompanyPayrollConfigRepository _configRepo) : IPayrollRuleProvider
 {
-    public Task<IEnumerable<IPayrollRule>> GetRulesAsync(PayrollRuleContext context)
+    public async Task<IEnumerable<IPayrollRule>> GetRulesAsync(PayrollRuleContext context)
     {
-        // TODO: load company tax rules from DB by context.Company.Id
-        return Task.FromResult<IEnumerable<IPayrollRule>>([new FlatTaxRule(0.20m)]);
+        var config = await _configRepo.GetAsync(context.Company.Id);
+        if (config is null)
+            return [];
+
+        return [new FlatTaxRule(config.TaxRate)];
     }
 }

@@ -5,7 +5,5 @@ namespace PayrollCalculator.Engines.Contracts;
 
 public interface IPayCalculationEngine
 {
-    PayCalculationResult Calculate(
-        Employee employee,
-        IEnumerable<IPayrollRule> rules);
+    PayCalculationResult Calculate(IEnumerable<IPayrollRule> rules);
 }

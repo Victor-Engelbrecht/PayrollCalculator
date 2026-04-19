@@ -79,7 +79,7 @@ public class PayrollManager : IPayrollManager
         foreach (var employee in employees)
         {
             var rules = await _ruleFactory.GetRulesAsync(company, employee);
-            var result = _payCalculationEngine.Calculate(employee, rules);
+            var result = _payCalculationEngine.Calculate(rules);
 
             var payslipId = await _payrollRepository.CreatePayslipAsync(new PayslipDetail
             {

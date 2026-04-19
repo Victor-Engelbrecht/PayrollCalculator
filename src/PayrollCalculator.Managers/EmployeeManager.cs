@@ -80,7 +80,7 @@ public class EmployeeManager : IEmployeeManager
             ?? throw new InvalidOperationException($"Company {employee.CompanyId} not found.");
 
         var rules = await _ruleFactory.GetRulesAsync(company, employee);
-        var result = _payCalculationEngine.Calculate(employee, rules);
+        var result = _payCalculationEngine.Calculate(rules);
 
         _wideEvent.Set("net_amount", result.NetAmount);
         _wideEvent.Set("total_additions", result.TotalAdditions);

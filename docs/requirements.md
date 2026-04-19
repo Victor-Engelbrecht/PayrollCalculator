@@ -11,13 +11,14 @@
 
 ## Technical Requirements
 
-- Single country and currency (no multi-jurisdiction tax complexity)
+- Single currency (no multi-currency support)
+- Multi-country employees supported via per-country statutory rules (minimum wage, etc.)
 - Scalable
 - Secure
 
 ## Out of Scope (for now)
 
-- Multi-currency / multi-jurisdiction tax calculations
+- Multi-currency calculations
 - Payroll approval workflows
 - Multiple payment provider integrations
 - Multiple communication channels (SMS, portal, etc.)

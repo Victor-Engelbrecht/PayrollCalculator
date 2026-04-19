@@ -6,11 +6,9 @@ namespace PayrollCalculator.Engines;
 
 public class PayCalculationEngine : IPayCalculationEngine
 {
-    public PayCalculationResult Calculate(
-        Employee employee,
-        IEnumerable<IPayrollRule> rules)
+    public PayCalculationResult Calculate(IEnumerable<IPayrollRule> rules)
     {
-        var context    = new PayCalculationContext { Employee = employee };
+        var context    = new PayCalculationContext();
         var violations = new List<RuleViolation>();
         var ruleList   = rules.ToList();
 

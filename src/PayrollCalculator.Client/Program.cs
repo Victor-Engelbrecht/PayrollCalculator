@@ -33,6 +33,8 @@ builder.Services.AddScoped<IPayrollManager, PayrollManager>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
+builder.Services.AddScoped<ICompanyPayrollConfigRepository, CompanyPayrollConfigRepository>();
+builder.Services.AddScoped<ICountryPayrollConfigRepository, CountryPayrollConfigRepository>();
 builder.Services.AddScoped<IPaymentAdapter, PaymentProviderAdapter>();
 builder.Services.AddScoped<IEmailAdapter, EmailAdapter>();
 builder.Services.AddScoped<IPayCalculationEngine, PayCalculationEngine>();

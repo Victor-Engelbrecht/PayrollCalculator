@@ -12,110 +12,154 @@ public class PayCalculationEngineTests
     [SetUp]
     public void SetUp() => _engine = new PayCalculationEngine();
 
-    private static Employee MakeEmployee(decimal baseSalary) => new()
-    {
-        Id        = 1,
-        CompanyId = 1,
-        FirstName = "Test",
-        LastName  = "Employee",
-        Email     = "test@example.com",
-        BaseSalary = baseSalary
-    };
-
-    private static IEnumerable<IPayrollRule> DefaultRules() =>
-        [new BaseSalaryRule(), new FlatTaxRule(0.20m), new MinimumWageRule(1500m)];
+    private static IEnumerable<IPayrollRule> DefaultRules(decimal baseSalary) =>
+        [new BaseSalaryRule(baseSalary), new FlatTaxRule(0.20m), new MinimumWageRule(1500m)];
 
     [Test]
-    public void Calculate_ReturnsCorrectNetAmount()
+    public void Given_StandardRules_When_Calculated_Then_NetAmountIsCorrect()
     {
-        // Gross = 5000, Tax = 1000, Net = 4000
-        var result = _engine.Calculate(MakeEmployee(5000m), DefaultRules());
+        // Given
+        var rules = DefaultRules(5000m);
 
+        // When
+        var result = _engine.Calculate(rules);
+
+        // Then
         Assert.That(result.NetAmount, Is.EqualTo(4000m));
     }
 
     [Test]
-    public void Calculate_ReturnsCorrectTotalAdditions()
+    public void Given_StandardRules_When_Calculated_Then_TotalAdditionsIsCorrect()
     {
-        var result = _engine.Calculate(MakeEmployee(5000m), DefaultRules());
+        // Given
+        var rules = DefaultRules(5000m);
 
+        // When
+        var result = _engine.Calculate(rules);
+
+        // Then
         Assert.That(result.TotalAdditions, Is.EqualTo(5000m));
     }
 
     [Test]
-    public void Calculate_ReturnsCorrectTotalDeductions()
+    public void Given_StandardRules_When_Calculated_Then_TotalDeductionsIsCorrect()
     {
-        var result = _engine.Calculate(MakeEmployee(5000m), DefaultRules());
+        // Given
+        var rules = DefaultRules(5000m);
 
+        // When
+        var result = _engine.Calculate(rules);
+
+        // Then
         Assert.That(result.TotalDeductions, Is.EqualTo(1000m));
     }
 
     [Test]
-    public void Calculate_WhenNetPayAboveMinimum_ReturnsNoViolations()
+    public void Given_NetPayAboveMinimum_When_Calculated_Then_NoViolationsReturned()
     {
-        // Net = 5000 * 0.80 = 4000 >= 1500
-        var result = _engine.Calculate(MakeEmployee(5000m), DefaultRules());
+        // Given
+        var rules = DefaultRules(5000m);
 
+        // When
+        var result = _engine.Calculate(rules);
+
+        // Then
         Assert.That(result.Violations, Is.Empty);
     }
 
     [Test]
-    public void Calculate_WhenNetPayBelowMinimum_ReturnsViolation()
+    public void Given_NetPayBelowMinimum_When_Calculated_Then_MinimumWageViolationReturned()
     {
-        // Net = 1800 * 0.80 = 1440 < 1500
-        var result = _engine.Calculate(MakeEmployee(1800m), DefaultRules());
+        // Given
+        var rules = DefaultRules(1800m);
 
+        // When
+        var result = _engine.Calculate(rules);
+
+        // Then
         Assert.That(result.Violations, Has.Count.EqualTo(1));
         Assert.That(result.Violations[0].RuleName, Is.EqualTo(nameof(MinimumWageRule)));
     }
 
     [Test]
-    public void Calculate_AppliesAdditionsBeforeDeductions()
+    public void Given_StandardRules_When_Calculated_Then_AdditionsAreAppliedBeforeDeductions()
     {
-        // If deductions ran first, GrossPay would be 0 and tax would be 0 instead of 1000.
-        // A non-zero TotalDeductions proves additions ran first.
-        var result = _engine.Calculate(MakeEmployee(5000m), DefaultRules());
+        // Given
+        var rules = DefaultRules(5000m);
 
+        // When
+        var result = _engine.Calculate(rules);
+
+        // Then
         Assert.That(result.TotalDeductions, Is.GreaterThan(0m));
     }
 
     [Test]
-    public void Calculate_AppliesDeductionsBeforeCompliance()
+    public void Given_StandardRules_When_Calculated_Then_DeductionsAreAppliedBeforeCompliance()
     {
-        // With salary 1800: Net after deductions = 1440 (below 1500 -> violation).
-        // If compliance ran before deductions, NetPay would still be 1800 (no violation).
-        var result = _engine.Calculate(MakeEmployee(1800m), DefaultRules());
+        // Given
+        var rules = DefaultRules(1800m);
 
-        Assert.That(result.Violations, Is.Not.Empty,
-            "Compliance rule should see the post-deduction net pay");
+        // When
+        var result = _engine.Calculate(rules);
+
+        // Then
+        Assert.That(result.Violations, Is.Not.Empty);
     }
 
     [Test]
-    public void Calculate_ReturnsLineItemsForEachRule()
+    public void Given_StandardRules_When_Calculated_Then_TwoLineItemsReturned()
     {
-        var result = _engine.Calculate(MakeEmployee(5000m), DefaultRules());
+        // Given
+        var rules = DefaultRules(5000m);
 
-        // BaseSalaryRule + FlatTaxRule each produce a line item; MinimumWageRule does not
+        // When
+        var result = _engine.Calculate(rules);
+
+        // Then
         Assert.That(result.LineItems, Has.Count.EqualTo(2));
     }
 
     [Test]
-    public void Calculate_LineItemsIncludeAdditionAndDeductionKinds()
+    public void Given_StandardRules_When_Calculated_Then_LineItemsContainBothAdditionAndDeductionKinds()
     {
-        var result = _engine.Calculate(MakeEmployee(5000m), DefaultRules());
+        // Given
+        var rules = DefaultRules(5000m);
 
+        // When
+        var result = _engine.Calculate(rules);
+
+        // Then
         Assert.That(result.LineItems.Any(li => li.Kind == PayslipLineItemKind.Addition),  Is.True);
         Assert.That(result.LineItems.Any(li => li.Kind == PayslipLineItemKind.Deduction), Is.True);
     }
 
     [Test]
-    public void Calculate_WithNoRules_ReturnsZeroAmounts()
+    public void Given_NoRules_When_Calculated_Then_AllAmountsAreZeroAndNoViolations()
     {
-        var result = _engine.Calculate(MakeEmployee(5000m), []);
+        // Given
+        var rules = Array.Empty<IPayrollRule>();
 
+        // When
+        var result = _engine.Calculate(rules);
+
+        // Then
         Assert.That(result.NetAmount,       Is.EqualTo(0m));
         Assert.That(result.TotalAdditions,  Is.EqualTo(0m));
         Assert.That(result.TotalDeductions, Is.EqualTo(0m));
         Assert.That(result.Violations,      Is.Empty);
+    }
+
+    [Test]
+    public void Given_OnlyComplianceRule_When_Calculated_Then_NoLineItemsReturned()
+    {
+        // Given
+        var rules = new IPayrollRule[] { new MinimumWageRule(1500m) };
+
+        // When
+        var result = _engine.Calculate(rules);
+
+        // Then
+        Assert.That(result.LineItems, Is.Empty);
     }
 }
